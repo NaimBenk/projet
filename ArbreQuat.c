@@ -21,7 +21,7 @@ void chaineCoordMinMax(Chaines* C, double* xmin, double* ymin, double* xmax, dou
 
             currentPoint = currentPoint->suiv;
         }
-        currentChaine = currentChaine->suiv;
+        currentChaine = currentChaine->suiv;// je test le git
     }
 }
 
