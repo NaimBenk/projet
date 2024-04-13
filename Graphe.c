@@ -12,7 +12,7 @@ int cherche_sommet(Graphe *g, int x, int y) {
         if (s->x == x && s->y ==y) 
             return i;
         i++;
-        s = s->g->T_som[i]
+        s = g->T_som[i];
     }
 
     return -1;
@@ -64,15 +64,15 @@ Graphe* creerGraphe(Reseau* r) {
 
 
     // Allocation du tableau des sommets
-    g->T_som = (**T_som)malloc(sizeof(*T_som)*r->nbNoeuds)
+    g->T_som = (Sommet **)malloc(sizeof(Sommet *)*r->nbNoeuds);
 
-    // On crée tous les sommets 
+    // On crée tous les sommets et on les mets numérotés dans le graphe
     int i=0;
     while (noeud_courant) {
         // Si on a déjà créer le sommet précédemment pas besoin de l'alloué
-        int index_sommet_existant = cherche_sommet(g, noeud_courant->nd->x, noeud_courant->nd->y)// -1 s'il n'existe pas sinon l'indice du sommet dans g->Tsom
+        int index_sommet_existant = cherche_sommet(g, noeud_courant->nd->x, noeud_courant->nd->y); // -1 s'il n'existe pas sinon l'indice du sommet dans g->Tsom
         if (index_sommet_existant > -1) {
-            sommet_courant = g->T_som[index_sommet_existant]
+            sommet_courant = g->T_som[index_sommet_existant];
         } else {
             sommet_courant = (Sommet *)malloc(sizeof(Sommet));
             // Copie des coordonnées
@@ -83,7 +83,8 @@ Graphe* creerGraphe(Reseau* r) {
             i++; //dans ce cas on doit incrémenter i
         }
 
-        noeud_voisin_courant = noeud_courant->nd->voisins;
+        // On initialise la tête de liste au premier des voisins de la liste des voisins du noeud courant
+        voisin_courant = noeud_courant->nd->voisins;
 
         while (voisin_courant) {
             int index_sommet_voisin_existant = cherche_sommet(g, voisin_courant->nd->x, voisin_courant->nd->y);
@@ -98,7 +99,7 @@ Graphe* creerGraphe(Reseau* r) {
 
                 g->T_som[i] = sommet_voisin;
             }
-            noeud_voisin_courant = noeud_voisin_courant->suiv;
+            voisin_courant = voisin_courant->suiv;
         }
         
         noeud_courant = noeud_courant->suiv;
@@ -108,10 +109,17 @@ Graphe* creerGraphe(Reseau* r) {
     CellCommodite* commodite_courante = r->commodites;
     // commodités du graphe 
     Commod* commod;
+    // Allocation du tableau de commodités 
+    g->T_commod = (Commod *)malloc(sizeof(Commod)*g->nbcommod);
+    int indice_tab_commod=0;
     // On crée les commodités
     while (commodite_courante) {
-        commod = (Commod *)malloc(sizeof(Commod));
-        
+        // Première extrémité        
+        g->T_commod[indice_tab_commod].e1=cherche_sommet(g, commodite_courante->extrA->x, commodite_courante->extrA->y);
+        // Seconde extrémité
+        g->T_commod[indice_tab_commod].e2=cherche_sommet(g, commodite_courante->extrB->x, commodite_courante->extrB->y);
+
+        indice_tab_commod++;
         commodite_courante = commodite_courante->suiv;
     }
 

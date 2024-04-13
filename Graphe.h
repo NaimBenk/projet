@@ -3,7 +3,6 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include "StructListe.h" 
 
 typedef struct {
     int u, v; /* Numeros des sommets extremite */

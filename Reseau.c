@@ -36,3 +36,16 @@ Reseau *reconstitueReseauListe (Chaines *C){
         tmpC = tmpC->suiv;
     }
 }
+
+int nbCommodites(Reseau *R) {
+    int nbCommod = 0;
+
+    CellCommodite *commoditeCourante = R->commodites;
+
+    while (commoditeCourante) {
+        nbCommod++;
+        commoditeCourante=commoditeCourante->suiv;
+    }
+
+    return nbCommod;
+}

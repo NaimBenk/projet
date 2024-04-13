@@ -31,6 +31,9 @@ Hachage.o: Hachage.c Hachage.h
 
 ArbreQuat.o: ArbreQuat.c ArbreQuat.h 
 	gcc $(CFLAGS) -c ArbreQuat.c
+
+Graphe.o: Graphe.c Graphe.h 
+	gcc $(CFLAGS) -c Graphe.c	
 	
 clean:
-	rm -f *.o *~ $(PROGRAMS)
+	rm -f *.o *~ $(PROGRAMS) ReconstitueReseau ChaineMain
