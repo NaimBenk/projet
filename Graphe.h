@@ -33,5 +33,6 @@ typedef struct {
 
 int cherche_sommet(Graphe *g, int x, int y);
 void creation_arete(Graphe *g, Sommet *s1, Sommet *s2);
+Graphe* creerGraphe(Reseau* r);
 
 #endif

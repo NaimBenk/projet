@@ -31,5 +31,4 @@ int defile(S_file *f){
   f->tete=f->tete->suiv;
   free(temp);
   return v;
-
 }

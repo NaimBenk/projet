@@ -1,7 +1,7 @@
 #include "Graphe.h"
 #include "Reseau.h"
 
-// À FINIR : gérer les commodités et la liste des voisins 
+// À FINIR : la liste des voisins 
 
 // Retourne l'indice du sommet dans le tableau des sommets du graphe ou -1 s'il n'est pas trouvé
 int cherche_sommet(Graphe *g, int x, int y) {
@@ -62,7 +62,6 @@ Graphe* creerGraphe(Reseau* r) {
     Arete* arete_courant;
     CellNoeud* voisin_courant;
 
-
     // Allocation du tableau des sommets
     g->T_som = (Sommet **)malloc(sizeof(Sommet *)*r->nbNoeuds);
 
@@ -85,7 +84,7 @@ Graphe* creerGraphe(Reseau* r) {
 
         // On initialise la tête de liste au premier des voisins de la liste des voisins du noeud courant
         voisin_courant = noeud_courant->nd->voisins;
-
+        // Notre méthode est aussi de créer tous les sommets voisins
         while (voisin_courant) {
             int index_sommet_voisin_existant = cherche_sommet(g, voisin_courant->nd->x, voisin_courant->nd->y);
             // Dans le cas où le sommet existe déjà il ne faut surout pas le recréer
@@ -96,8 +95,11 @@ Graphe* creerGraphe(Reseau* r) {
                 sommet_voisin->num = i;
                 sommet_voisin->x = voisin_courant->nd->x;
                 sommet_voisin->y = voisin_courant->nd->y;
+                // On créer une arête uniquement dans ce cas car le sommet est nouveau donc il ne peut pas encore avoir d'arête avec le sommet courant
+                creation_arete(g, sommet_courant, sommet_voisin);
 
                 g->T_som[i] = sommet_voisin;
+                i++; //On doit aussi incrémenter i
             }
             voisin_courant = voisin_courant->suiv;
         }
@@ -109,7 +111,7 @@ Graphe* creerGraphe(Reseau* r) {
     CellCommodite* commodite_courante = r->commodites;
     // commodités du graphe 
     Commod* commod;
-    // Allocation du tableau de commodités 
+    // Allocation du tableau de commodités !!ce ne sont pas des pointeurs sur des commodités mais bien des commodités directement 
     g->T_commod = (Commod *)malloc(sizeof(Commod)*g->nbcommod);
     int indice_tab_commod=0;
     // On crée les commodités
@@ -125,3 +127,8 @@ Graphe* creerGraphe(Reseau* r) {
 
     return g;
 }
+
+int parcours_en_largeur(Graphe *g, Sommet* s1, Sommet* s2) {
+    
+}
+
