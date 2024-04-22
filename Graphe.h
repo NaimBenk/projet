@@ -31,6 +31,12 @@ typedef struct {
     Commod *T_commod; /* Tableau des commodites */
 } Graphe;
 
+// Structure créee pour le parcours en largeur afin d'avoir la liste des sommets déjà visités
+typedef struct cellule_sommet {
+    Sommet *s; /* pointeur sur l’arete */
+    struct cellule_sommet *suiv;
+} Cellule_sommet;
+
 int cherche_sommet(Graphe *g, int x, int y);
 void creation_arete(Graphe *g, Sommet *s1, Sommet *s2);
 Graphe* creerGraphe(Reseau* r);

@@ -1,7 +1,7 @@
 #include "Graphe.h"
 #include "Reseau.h"
-
-// À FINIR : la liste des voisins 
+#include "Struct_File.h"
+#include "Struct_Liste_Entiers.h"
 
 // Retourne l'indice du sommet dans le tableau des sommets du graphe ou -1 s'il n'est pas trouvé
 int cherche_sommet(Graphe *g, int x, int y) {
@@ -128,7 +128,58 @@ Graphe* creerGraphe(Reseau* r) {
     return g;
 }
 
-int parcours_en_largeur(Graphe *g, Sommet* s1, Sommet* s2) {
-    
+// 1. On enfile le sommet de départ
+// 2. On enfile les sommets adjacents à la tête de file
+// 3. On défile
+// 4. Tant que la file n'est pas vide, on ré-itère les points 2 et 3
+int parcours_en_largeur(Graphe *g, Sommet* u, Sommet* v) {
+    // Si u et v sont les mêmes sommets alors le plus court chemin est nul
+    if (u->num == v->num) return 0; 
+
+    // Initialisation du tableau pour marquer les sommets visités
+    int* visites = (int*)malloc(g->nbsom * sizeof(int));
+    for (int i = 0; i < g->nbsom; ++i)
+        visites[i] = 0;
+
+    // Initialisation du tableau pour noter les distances de chaque sommet à u
+    int* tab_distances = (int*)malloc(g->nbsom * sizeof(int));
+    for (int i = 0; i < g->nbsom; ++i)
+        tab_distances[i] = 0;
+
+    int plus_court_chemin = 1;
+    int valeur_tete_file;
+    // création de la file
+    S_file* file = (S_file *)malloc(sizeof(S_file));
+    // Initialisation de la file
+    Init_file(file);
+
+    // On enfile le sommet de départ
+    enfile(file, u->num);
+    visites[u->num] = 1;
+
+    while(!estFileVide(file)) {
+        // On défile
+        valeur_tete_file = defile(file);
+        // On enfile les sommets adjacents à la tête de file
+        Cellule_arete* voisins = g->T_som[valeur_tete_file]->L_voisin;
+        while(voisins) {
+            // on doit traîter les deux cas car on ne sait pas si le sommet voisin est u ou v dans l'arête
+            if(voisins->a->u == valeur_tete_file) {
+                if(!visites[voisins->a->v]) {
+                    enfile(file, voisins->a->v);
+                    visites[voisins->a->v] = 1;
+                }
+            } else if(voisins->a->v == valeur_tete_file) {
+                if(!visites[voisins->a->u]) {
+                    enfile(file, voisins->a->u);
+                    visites[voisins->a->u] = 1;
+                }
+            }
+            // On enfile le sommet voisin
+            voisins = voisins->suiv;
+        }
+    }
+
+    free(file);
 }
 
