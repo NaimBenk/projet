@@ -7,7 +7,7 @@ void chaineCoordMinMax(Chaines* C, double* xmin, double* ymin, double* xmax, dou
     if (!C) return;
 
     // Initialiser xmin, ymin, xmax, ymax avec des valeurs extrêmes pour les comparer ensuite
-    *xmin = *ymin = __DBL_MAX__;
+    *xmin = *ymin = __DBL_MAX__; // evite de faire une iteration hors boucle pour initialiser aux premieres valeurs avant comparaison
     *xmax = *ymax = -__DBL_MAX__;
 
     CellChaine* currentChaine = C->chaines;
@@ -42,8 +42,113 @@ ArbreQuat* creerArbreQuat(double xc, double yc, double coteX, double coteY) {
 }
 
 
+void insererNoeudArbre(Noeud* n, ArbreQuat** a, ArbreQuat* parent) {
+    if (*a == NULL) { // Arbre vide
+        double xc, yc, coteX, coteY;
+        if (parent == NULL) {
+            // Si aucun parent on choisis les dimensions arbitrairement
+            xc = n->x; yc = n->y;
+            coteX = coteY = 1.0; // valeurs par défaut
+        } else {
+            // Calcul des dimensions basée sur le pere
+            coteX = parent->coteX / 2;
+            coteY = parent->coteY / 2;
+            xc = n->x < parent->xc ? parent->xc - coteX / 2 : parent->xc + coteX / 2;
+            yc = n->y < parent->yc ? parent->yc - coteY / 2 : parent->yc + coteY / 2;
+        }
+        *a = creerArbreQuat(xc, yc, coteX, coteY);
+        (*a)->noeud = n;
+    } else if ((*a)->noeud != NULL) { // Feuille
+        // Si le point à insérer est identique on ne fait rien
+        if ((*a)->noeud->x == n->x && (*a)->noeud->y == n->y) {
+            return;
+        }
+        // Sinon, scindez la feuille
+        Noeud* ancienNoeud = (*a)->noeud;
+        (*a)->noeud = NULL; // Efface le noeud car nous allons diviser cette cellule
+        insererNoeudArbre(ancienNoeud, a, *a);
+        insererNoeudArbre(n, a, *a);
+    } else { // Cellule interne
+        // On determine dans quelle sous-cellule insérer le noeud
+        ArbreQuat** subTree;
+        if (n->x < (*a)->xc && n->y < (*a)->yc)
+            subTree = &(*a)->no;
+        else if (n->x >= (*a)->xc && n->y < (*a)->yc)
+            subTree = &(*a)->ne;
+        else if (n->x < (*a)->xc && n->y >= (*a)->yc)
+            subTree = &(*a)->so;
+        else
+            subTree = &(*a)->se;
 
+        insererNoeudArbre(n, subTree, *a);
+    }
+}
 
-void insererNoeudArbre(Noeud* n, ArbreQuat** a, ArbreQuat* parent);
-Noeud* rechercheCreeNoeudArbre(Reseau* R, ArbreQuat** a, ArbreQuat* parent, double x, double y);
-Reseau* reconstitueReseauArbre(Chaines* C);
+Noeud* rechercheCreeNoeudArbre(Reseau* R, ArbreQuat** a, ArbreQuat* parent, double x, double y) {
+    if (*a == NULL) {
+        // Si l'arbre est vide, on creer un nouveau noeud et initialisez l'arbre
+        Noeud* n = (Noeud*)malloc(sizeof(Noeud));
+        if (!n) return NULL; // Vérification de l'échec de l'allocation
+        n->x = x;
+        n->y = y;
+        n->num = ++R->nbNoeuds;
+        n->voisins = NULL;
+
+        // Créer un nouvel arbre quaternaire pour ce noeud
+        *a = creerArbreQuat(x, y, parent ? parent->coteX / 2 : 0.5, parent ? parent->coteY / 2 : 0.5); // Les valeurs 0.5 sont choisis arbitrairement
+        if (!*a) {
+            free(n);
+            return NULL;
+        }
+        (*a)->noeud = n;
+        return n;
+    } else if ((*a)->noeud) {
+        // Si un noeud existe déjà à cette position, et que c'est le même on le retourne
+        if ((*a)->noeud->x == x && (*a)->noeud->y == y) {
+            return (*a)->noeud;
+        } else {
+            // Si conflit, on divise la cellule en dessandant d'un etage
+            Noeud* ancienNoeud = (*a)->noeud;
+            (*a)->noeud = NULL; // L'arbre ne contient plus directement un noeud
+            insererNoeudArbre(ancienNoeud, a, *a);
+            return rechercheCreeNoeudArbre(R, a, *a, x, y);
+        }
+    } else {
+        // Sinon, on détermine dans quelle sous-arbre on vas descendre
+        ArbreQuat** subTree = NULL;
+        if (x < (*a)->xc && y < (*a)->yc) subTree = &(*a)->no;
+        else if (x >= (*a)->xc && y < (*a)->yc) subTree = &(*a)->ne;
+        else if (x < (*a)->xc && y >= (*a)->yc) subTree = &(*a)->so;
+        else subTree = &(*a)->se;
+
+        return rechercheCreeNoeudArbre(R, subTree, *a, x, y);
+    }
+}
+
+Reseau* reconstitueReseauArbre(Chaines* C) {
+    Reseau* R = (Reseau*)malloc(sizeof(Reseau));
+    R->noeuds = NULL;
+    R->nbNoeuds = 0;
+    // On creer l'abre quat
+    double xmin, ymin, xmax, ymax;
+    chaineCoordMinMax(C, &xmin, &ymin, &xmax, &ymax);
+    double xc = (xmin + xmax) / 2;
+    double yc = (ymin + ymax) / 2;
+    double coteX = xmax - xmin;
+    double coteY = ymax - ymin;
+
+    ArbreQuat* racine = creerArbreQuat(xc, yc, coteX, coteY);
+
+    CellChaine* courante = C->chaines;
+    // Il suffit d'appliquer recherche sur tout les points de la chaine
+    while (courante) {
+        CellPoint* point = courante->points;
+        while (point) {
+            Noeud* nouveauNoeud = rechercheCreeNoeudArbre(R, &racine, racine, point->x, point->y);
+            point = point->suiv;
+        }
+        courante = courante->suiv;
+    }
+    
+    return R;
+}

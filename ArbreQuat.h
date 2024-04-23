@@ -25,7 +25,4 @@ Noeud* rechercheCreeNoeudArbre(Reseau* R, ArbreQuat** a, ArbreQuat* parent, doub
 Reseau* reconstitueReseauArbre(Chaines* C);
 
 
-
-
-
 #endif
