@@ -17,8 +17,8 @@ main_1: Chaine.o ChaineMain.o SVGwriter.o Reseau.o
 main_2: Chaine.o ReconstitueReseau.o SVGwriter.o Reseau.o Hachage.o ArbreQuat.o
 	$(CC) -o ReconstitueReseau $(CFLAGS) Chaine.o ReconstitueReseau.o Reseau.o Hachage.o ArbreQuat.o SVGwriter.o -lm
 
-main_3: Graphe.o GrapheMain.o Struct_File.o Reseau.o
-	$(CC) -o GrapheMain $(CFLAGS) Graphe.o Struct_File.o GrapheMain.o Reseau.o
+main_3: Graphe.o SVGwriter.o GrapheMain.o Struct_File.o Reseau.o 
+	$(CC) -o GrapheMain $(CFLAGS) SVGwriter.o Graphe.o Struct_File.o GrapheMain.o Reseau.o
 
 ChaineMain.o: ChaineMain.c
 	gcc $(CFLAGS) -c ChaineMain.c
@@ -46,6 +46,6 @@ Struct_File.o: Struct_File.c Struct_File.h
 
 Graphe.o: Graphe.c Graphe.h
 	gcc $(CFLAGS) -c Graphe.c 
-	
+
 clean:
 	rm -f *.o *~ $(PROGRAMS) ReconstitueReseau ChaineMain GrapheMain

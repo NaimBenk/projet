@@ -42,7 +42,6 @@ Noeud* rechercheCreeNoeudHachage(Reseau* R, TableHachage* H, double x, double y)
     nouvelleCellule = (CellNoeud*)malloc(sizeof(CellNoeud));
     if (!nouvelleCellule) { // Gestion d'erreur
         free(nouveau);
-        // Ici, on devrait aussi retirer le nœud de la table de hachage si nécessaire
         return NULL;
     }
     nouvelleCellule->nd = nouveau;
@@ -85,8 +84,6 @@ Reseau* reconstitueReseauHachage(Chaines *C, int M) {
         }
         cellChaineActuelle = cellChaineActuelle->suiv;
     }
-
-    // À ce stade, tous les nœuds ont été ajoutés au réseau R et à la table de hachage H
 
     // Libération de la table de hachage (les nœuds restent dans R)
     for (int i = 0; i < M; i++) {

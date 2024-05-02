@@ -126,29 +126,34 @@ Noeud* rechercheCreeNoeudArbre(Reseau* R, ArbreQuat** a, ArbreQuat* parent, doub
 }
 
 Reseau* reconstitueReseauArbre(Chaines* C) {
+    if (!C) return NULL;
+
     Reseau* R = (Reseau*)malloc(sizeof(Reseau));
+    if (!R) return NULL;
     R->noeuds = NULL;
     R->nbNoeuds = 0;
-    // On creer l'abre quat
+    R->commodites = NULL;
+
     double xmin, ymin, xmax, ymax;
     chaineCoordMinMax(C, &xmin, &ymin, &xmax, &ymax);
-    double xc = (xmin + xmax) / 2;
-    double yc = (ymin + ymax) / 2;
-    double coteX = xmax - xmin;
-    double coteY = ymax - ymin;
-
-    ArbreQuat* racine = creerArbreQuat(xc, yc, coteX, coteY);
+    ArbreQuat* racine = creerArbreQuat((xmin + xmax) / 2, (ymin + ymax) / 2, xmax - xmin, ymax - ymin);
+    if (!racine) {
+        free(R);
+        return NULL;
+    }
 
     CellChaine* courante = C->chaines;
-    // Il suffit d'appliquer recherche sur tout les points de la chaine
     while (courante) {
         CellPoint* point = courante->points;
         while (point) {
-            Noeud* nouveauNoeud = rechercheCreeNoeudArbre(R, &racine, racine, point->x, point->y);
+            if (!rechercheCreeNoeudArbre(R, &racine, racine, point->x, point->y)) {
+                libererReseau(R); // Assurez-vous d'avoir une fonction pour libérer l'arbre
+                return NULL;
+            }
             point = point->suiv;
         }
         courante = courante->suiv;
     }
-    
+
     return R;
 }

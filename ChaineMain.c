@@ -39,7 +39,5 @@ int main(int argc, char **argv) {
     afficheChainesSVG(C, "visuel_chaines");
     printf("%d \n", comptePointsTotal(C));
 
-    // Librere la mémoire allouée pour les chaines et effectuez un nettoyage
-
     return 0;
 }

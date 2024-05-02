@@ -38,5 +38,9 @@ void ecrireReseau(Reseau *R, FILE *f);
 int nbLiaisons(Reseau *R);
 int nbCommodites(Reseau *R);
 void afficheReseauSVG(Reseau *R, char* nomInstance);
+
+void libererChaines(Chaines *C);
+void libererReseau(Reseau *R);
+
 #endif
 

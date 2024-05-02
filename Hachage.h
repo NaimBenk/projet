@@ -12,9 +12,8 @@ typedef struct{
   CellNoeud** T;
 } TableHachage ;
 
-
-Noeud* rechercheCreeNoeudHachage();
-Reseau* reconstitueReseauHachage();
+Noeud* rechercheCreeNoeudHachage(Reseau* R, TableHachage* H, double x, double y);
+Reseau* reconstitueReseauHachage(Chaines *C, int M);
 
 
 
