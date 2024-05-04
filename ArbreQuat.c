@@ -41,7 +41,6 @@ ArbreQuat* creerArbreQuat(double xc, double yc, double coteX, double coteY) {
     return nouveau;
 }
 
-
 void insererNoeudArbre(Noeud* n, ArbreQuat** a, ArbreQuat* parent) {
     if (*a == NULL) { // Arbre vide
         double xc, yc, coteX, coteY;
@@ -58,6 +57,8 @@ void insererNoeudArbre(Noeud* n, ArbreQuat** a, ArbreQuat* parent) {
         }
         *a = creerArbreQuat(xc, yc, coteX, coteY);
         (*a)->noeud = n;
+
+
     } else if ((*a)->noeud != NULL) { // Feuille
         // Si le point à insérer est identique on ne fait rien
         if ((*a)->noeud->x == n->x && (*a)->noeud->y == n->y) {
@@ -68,6 +69,8 @@ void insererNoeudArbre(Noeud* n, ArbreQuat** a, ArbreQuat* parent) {
         (*a)->noeud = NULL; // Efface le noeud car nous allons diviser cette cellule
         insererNoeudArbre(ancienNoeud, a, *a);
         insererNoeudArbre(n, a, *a);
+
+
     } else { // Cellule interne
         // On determine dans quelle sous-cellule insérer le noeud
         ArbreQuat** subTree;
@@ -101,6 +104,17 @@ Noeud* rechercheCreeNoeudArbre(Reseau* R, ArbreQuat** a, ArbreQuat* parent, doub
             return NULL;
         }
         (*a)->noeud = n;
+
+        // Ajout du nouveau noeud à la liste des noeuds du réseau
+        CellNoeud* nouvelleCell = (CellNoeud*)malloc(sizeof(CellNoeud));
+        if (!nouvelleCell) {
+            free(n); // Libération de la mémoire si la cellule ne peut être allouée
+            return NULL;
+        }
+        nouvelleCell->nd = n;
+        nouvelleCell->suiv = R->noeuds;
+        R->noeuds = nouvelleCell;
+        
         return n;
     } else if ((*a)->noeud) {
         // Si un noeud existe déjà à cette position, et que c'est le même on le retourne
@@ -147,7 +161,7 @@ Reseau* reconstitueReseauArbre(Chaines* C) {
         CellPoint* point = courante->points;
         while (point) {
             if (!rechercheCreeNoeudArbre(R, &racine, racine, point->x, point->y)) {
-                libererReseau(R); // Assurez-vous d'avoir une fonction pour libérer l'arbre
+                libererReseau(R); 
                 return NULL;
             }
             point = point->suiv;

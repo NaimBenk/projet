@@ -46,11 +46,11 @@ Noeud* rechercheCreeNoeudHachage(Reseau* R, TableHachage* H, double x, double y)
     }
     nouvelleCellule->nd = nouveau;
     nouvelleCellule->suiv = R->noeuds;
+    // L'incrémentation de R nbNoeuds a déja eu lieu ulterieurement
     R->noeuds = nouvelleCellule;
 
     return nouveau;
 }
-
 
 Reseau* reconstitueReseauHachage(Chaines *C, int M) {
     // Allocation de la structure du réseau

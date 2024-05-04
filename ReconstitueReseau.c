@@ -12,6 +12,7 @@ int main(int argc, char **argv) {
         return 1;
     }
     int methode = atoi(argv[2]);
+    
     FILE *fichier = fopen(argv[1], "r");
     if (!fichier) {
         perror("Erreur lors de l'ouverture du fichier d'entrée");
@@ -45,9 +46,6 @@ int main(int argc, char **argv) {
             break;
     case 3: // Utilisation de l'arbre quaternaire
             {
-                double xmin, ymin, xmax, ymax;
-                chaineCoordMinMax(chaines, &xmin, &ymin, &xmax, &ymax);
-                ArbreQuat *racine = creerArbreQuat((xmin + xmax) / 2, (ymin + ymax) / 2, xmax - xmin, ymax - ymin);
                 reseau = reconstitueReseauArbre(chaines);
                 nomSVG = "etat_apres_arbre.svg";
             }

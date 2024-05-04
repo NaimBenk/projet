@@ -6,7 +6,7 @@ typedef struct noeud Noeud;
 
 /* Liste chainee de noeuds (pour la liste des noeuds du reseau ET les listes des voisins de chaque noeud) */
 typedef struct cellnoeud {
-    Noeud *nd;               /* Pointeur vers le noeud stock\'e */
+    Noeud *nd;               /* Pointeur vers le noeud stocké */
     struct cellnoeud *suiv;         /* Cellule suivante dans la liste */
 } CellNoeud;
 
@@ -43,4 +43,3 @@ void libererChaines(Chaines *C);
 void libererReseau(Reseau *R);
 
 #endif
-
