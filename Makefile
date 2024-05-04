@@ -48,4 +48,4 @@ Graphe.o: Graphe.c Graphe.h
 	gcc $(CFLAGS) -c Graphe.c 
 
 clean:
-	rm -f *.o *~ $(PROGRAMS) ReconstitueReseau ChaineMain GrapheMain
+	rm -f *.o *.svg.html *~ $(PROGRAMS) ReconstitueReseau ChaineMain GrapheMain
