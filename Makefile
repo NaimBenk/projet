@@ -51,4 +51,4 @@ Graphe.o: Graphe.c Graphe.h
 	gcc $(CFLAGS) -c Graphe.c 
 
 clean:
-	rm -f *.o *.svg.html *~ $(PROGRAMS) ReconstitueReseau ChaineMain GrapheMain CompareTemps test.txt
+	rm -f *.o *.svg.html *~ $(PROGRAMS) ReconstitueReseau ChaineMain GrapheMain CompareTemps
