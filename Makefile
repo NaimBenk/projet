@@ -2,7 +2,7 @@
 CFLAGS = -g -Wno-unused-parameter
 CC = gcc
 
-PROGRAMS = main_1 main_2 main_3 test
+PROGRAMS = main_1 main_2 main_3 main_4 test
 
 .PHONY:	all clean
 
@@ -19,6 +19,9 @@ main_2: Chaine.o ReconstitueReseau.o SVGwriter.o Reseau.o Hachage.o ArbreQuat.o
 
 main_3: Graphe.o SVGwriter.o GrapheMain.o Struct_File.o Reseau.o 
 	$(CC) -o GrapheMain $(CFLAGS) SVGwriter.o Graphe.o Struct_File.o GrapheMain.o Reseau.o
+
+main_4: Chaine.o CompareTemps.o SVGwriter.o Reseau.o Hachage.o ArbreQuat.o
+	$(CC) -g -o CompareTemps $(CFLAGS) Chaine.o CompareTemps.o Reseau.o Hachage.o ArbreQuat.o SVGwriter.o -lm
 
 ChaineMain.o: ChaineMain.c
 	gcc $(CFLAGS) -c ChaineMain.c
@@ -48,4 +51,4 @@ Graphe.o: Graphe.c Graphe.h
 	gcc $(CFLAGS) -c Graphe.c 
 
 clean:
-	rm -f *.o *.svg.html *~ $(PROGRAMS) ReconstitueReseau ChaineMain GrapheMain
+	rm -f *.o *.svg.html *~ $(PROGRAMS) ReconstitueReseau ChaineMain GrapheMain CompareTemps test.txt
